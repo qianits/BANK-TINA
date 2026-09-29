@@ -1,5 +1,6 @@
 package com.id.co.bni.bank.tina.controller;
 import java.util.List;
+import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,10 +16,7 @@ import com.id.co.bni.bank.tina.dto.UpdatedNasabah;
 import com.id.co.bni.bank.tina.model.Nasabah;
 import com.id.co.bni.bank.tina.service.BankService;
 
-import lombok.extern.slf4j.Slf4j;
-
 @RestController 
-@Slf4j 
 public class BankController {
     
     private final BankService bankService;
@@ -29,7 +27,7 @@ public class BankController {
     
     // Endpoint to create a new Nasabah
     @PostMapping("/nasabah/create")
-    public ResponseEntity<Response> createNasabah(@RequestBody Nasabah nasabah) {
+    public ResponseEntity<Response> createNasabah(@Valid @RequestBody Nasabah nasabah) {
         if (bankService.getNasabahById(nasabah.getNomorKTP()) != null) {
             Response response = Response.builder()
                     .code(400)
