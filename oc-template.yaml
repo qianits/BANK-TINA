@@ -149,6 +149,5 @@ parameters:
     value: BANK-TINA
   - name: GROUP_APP_NAME
     description: group application name
-    value: ""
     required: true
     value: BANK-NASABAH
