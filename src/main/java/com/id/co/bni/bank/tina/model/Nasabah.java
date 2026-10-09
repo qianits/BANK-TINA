@@ -1,9 +1,13 @@
 package com.id.co.bni.bank.tina.model;
 
 import jakarta.validation.constraints.Pattern;
+
+import com.id.co.bni.bank.tina.utils.NoRekeningGenerator;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 import lombok.Data;
@@ -37,5 +41,21 @@ public class Nasabah {
     @Pattern(regexp = "\\d{10,13}", message = "Nomor handphone harus terdiri dari 10-13 digit angka")
     @Column (name =  "NOMOR_HANPHONE", nullable = false)
     private String nomorHandphone; 
+
+    @Column (name = "NO_REKENING")
+    private String noRekening;
+
+    @PrePersist
+    public void generateNoRekening() {
+        if (noRekening == null || noRekening.isBlank()) {
+            noRekening = NoRekeningGenerator.generate(
+                nomorKTP,
+                nomorHandphone
+            );
+        }
+    }
+
+    @Column (name = "AMOUNT", nullable = false)
+    private double amount = 0.0;
 
 }

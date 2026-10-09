@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.id.co.bni.bank.tina.dto.Response;
 import com.id.co.bni.bank.tina.dto.ResponsePagination;
+import com.id.co.bni.bank.tina.dto.TransactionRequest;
 import com.id.co.bni.bank.tina.dto.UpdatedNasabah;
 import com.id.co.bni.bank.tina.model.Nasabah;
 import com.id.co.bni.bank.tina.service.BankService;
@@ -126,5 +127,59 @@ public class BankController {
             return ResponseEntity.status(response.getCode()).body(response);
         }
     }
-    
+
+    @PostMapping("/nasabah/transaction")
+    public ResponseEntity<Response> createTransaction(
+            @RequestBody TransactionRequest transactionRequest) {
+
+        try {
+            boolean transaction = bankService.transferAmount(
+                transactionRequest.getNoRekSource(),
+                transactionRequest.getNoRekDestination(),
+                transactionRequest.getAmount()
+            );
+
+            if (!transaction) {
+                Response response = Response.builder()
+                        .code(400)
+                        .message("Transaction failed")
+                        .data(null)
+                        .build();
+
+                return ResponseEntity
+                        .status(response.getCode())
+                        .body(response);
+            }
+
+            Response response = Response.builder()
+                    .code(200)
+                    .message("Transaction successful")
+                    .data(null)
+                    .build();
+
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            Response response = Response.builder()
+                    .code(400)
+                    .message(e.getMessage())
+                    .data(null)
+                    .build();
+
+            return ResponseEntity
+                    .status(response.getCode())
+                    .body(response);
+
+        } catch (RuntimeException e) {
+            Response response = Response.builder()
+                    .code(500)
+                    .message("Transaction failed due to an internal error")
+                    .data(null)
+                    .build();
+
+            return ResponseEntity
+                    .status(response.getCode())
+                    .body(response);
+        }
+    }
 }
