@@ -71,7 +71,7 @@ objects:
       namespace: ${NS_NAME}
     data:
       TZ: "Asia/Jakarta"
-      ENV_DB_HOST: "192.168.179.216:1685:soasys"
+      ENV_DB_HOST: "192.168.143.93:1686:soasysqa"
       ENV_DB_USER: "soa_app"
       ENV_DB_PASS: "soaapp123"
   - apiVersion: route.openshift.io/v1

@@ -1,7 +1,5 @@
 package com.id.co.bni.bank.tina.controller;
-import java.util.List;
-import jakarta.validation.Valid;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,12 +7,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.id.co.bni.bank.tina.dto.Response;
+import com.id.co.bni.bank.tina.dto.ResponsePagination;
 import com.id.co.bni.bank.tina.dto.UpdatedNasabah;
 import com.id.co.bni.bank.tina.model.Nasabah;
 import com.id.co.bni.bank.tina.service.BankService;
+
+import jakarta.validation.Valid;
 
 @RestController 
 public class BankController {
@@ -70,13 +72,19 @@ public class BankController {
               
 
     // Endpoint to get all Nasabah
-    @GetMapping("/nasabah/all")
-    public ResponseEntity<Response> getAllNasabah() {
-        List<Nasabah> nasabahList = bankService.getAllNasabah();
-        Response response = Response.builder()
+    // Using Pagination
+    @GetMapping("/nasabah/all/")
+    public ResponseEntity<ResponsePagination> getAllNasabah( @RequestParam(defaultValue = "0") int page,  
+                                                   @RequestParam(defaultValue = "2") int size,
+                                                   @RequestParam(defaultValue = "asc") String sortBy) {
+        Page<Nasabah> nasabahContent = bankService.getAllNasabah(page, size, sortBy);
+        ResponsePagination response = ResponsePagination.builder()
                 .code(200)
                 .message("All Nasabah retrieved successfully")
-                .data(nasabahList)
+                .data(nasabahContent.getContent())
+                .totalElements(nasabahContent.getTotalElements())
+                .totalPages(nasabahContent.getTotalPages())
+                .pageNumber(nasabahContent.getNumber()+1)
                 .build();
         return ResponseEntity.ok(response);
     }
@@ -98,6 +106,7 @@ public class BankController {
                 .build();
         return ResponseEntity.status(response.getCode()).body(response);
     }
+
 
     @DeleteMapping("/nasabah/delete/{nomorKTP}")
     public ResponseEntity<Response> deleteNasabah(@PathVariable String nomorKTP) {

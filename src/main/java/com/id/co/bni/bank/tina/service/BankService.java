@@ -1,6 +1,9 @@
 package com.id.co.bni.bank.tina.service;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.id.co.bni.bank.tina.dto.UpdatedNasabah;
@@ -28,8 +31,14 @@ public class BankService {
         return bankRepository.findByNomorKTP(nomorKTP);
     }
 
-    public List<Nasabah> getAllNasabah() {
-        return bankRepository.findAll();
+    public Page<Nasabah> getAllNasabah(int page, int size, String sortBy) {
+        Pageable pageable;
+        if (sortBy.equals("asc")){
+            pageable = PageRequest.of(page, size,  Sort.by("nomorKTP").ascending());
+        } else {
+            pageable = PageRequest.of(page, size,  Sort.by("nomorKTP").descending());
+        }
+        return bankRepository.findAll(pageable);
     }
 
     public boolean updateNasabah(String nomorKTP, UpdatedNasabah updatedNasabah) {
